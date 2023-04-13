@@ -55,10 +55,6 @@ After enumerating subdomains, the scanner checks each subdomain for potential su
 
 The scanner generates a report with the results, listing potential takeovers by provider, and saves it to a text file. The `main()` function handles user input, calls the `find_subdomain_takeovers()` function, and writes the report.
 
-## Usage
-
-To run the scanner, execute the `subdomain_takeover.py` script and provide the target domain when prompted. The scanner will perform subdomain enumeration, check for potential takeovers, and generate a report with the results.
-
 ## Limitations and known issues
 
 - The script relies on DNS TXT records for subdomain enumeration. If the target domain does not have a TXT record for subdomain enumeration, the script may not discover all subdomains.
@@ -67,7 +63,7 @@ To run the scanner, execute the `subdomain_takeover.py` script and provide the t
 
 ## Usage
 
-To use the Subdomain Takeover Scanner, follow these steps:
+To run the scanner, execute the `subdomain_takeover.py` script and provide the target domain when prompted. The scanner will perform subdomain enumeration, check for potential takeovers, and generate a report with the results.
 
 1. Install the required dependencies mentioned in the requirements.txt file using the following command:
 
