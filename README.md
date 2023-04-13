@@ -5,12 +5,15 @@ This Python script helps detect subdomain takeovers by scanning a target domain 
 
 ## Table of Contents
 
-- [How it works](#How it works)
+- [Overview](#overview)
+- [How it works](#how-it-works)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Improvements](#improvements)
+- [Examples](#examples)
+- [Limitations and known issues](#limitations-and-known-issues)
 - [Contributing](#contributing)
 - [License](#license)
+
 
 ## How it works
 
