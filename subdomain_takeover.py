@@ -1,7 +1,5 @@
 import asyncio
 import aiohttp
-from dns import resolver
-from dns.exception import DNSException
 from typing import List, Dict, Optional
 from identifiers import IDENTIFIERS
 from amass import run_amass
@@ -15,7 +13,7 @@ USER_AGENT = f"SubdomainTakeoverScanner/1.0 (+{PROJECT_URL})"
 
 async def check_subdomain_takeover(url: str, sem: asyncio.Semaphore) -> Optional[str]:
     async with sem:
-        headers = {'User-Agent': USER_AGENT}
+        headers = {"User-Agent": USER_AGENT}
         async with aiohttp.ClientSession(headers=headers) as session:
             try:
                 async with session.get(url, timeout=5) as response:
@@ -34,27 +32,36 @@ async def check_subdomain_takeover(url: str, sem: asyncio.Semaphore) -> Optional
 async def find_subdomain_takeovers(domain: str) -> Dict[str, List[str]]:
     # Amass subdomains
     amass_subdomains = run_amass(domain)
-    
+
     # DNS brute-forcing
     wordlist_filename = "wordlist.txt"
     wordlist = load_wordlist(wordlist_filename)
     brute_force_subdomains = dns_bruteforce(domain, wordlist)
-    
+
     # DNS zone transfers
     zone_transfer_subdomains = dns_zone_transfer(domain)
-    
+
     # Certificate Transparency logs
     ct_subdomains = ct_logs_crtsh(domain)
-    
+
     # Combine all subdomains
-    subdomains = list(set(amass_subdomains + brute_force_subdomains + zone_transfer_subdomains + ct_subdomains))
+    subdomains = list(
+        set(
+            amass_subdomains
+            + brute_force_subdomains
+            + zone_transfer_subdomains
+            + ct_subdomains
+        )
+    )
 
     takeovers = {}
-    sem = asyncio.Semaphore(10)  # Set the concurrency level (number of simultaneous tasks)
+    sem = asyncio.Semaphore(
+        10
+    )  # Set the concurrency level (number of simultaneous tasks)
 
     tasks = []
     for subdomain in subdomains:
-        for protocol in ('http', 'https'):
+        for protocol in ("http", "https"):
             url = f"{protocol}://{subdomain}"
             tasks.append(asyncio.ensure_future(check_subdomain_takeover(url, sem)))
 
@@ -64,7 +71,7 @@ async def find_subdomain_takeovers(domain: str) -> Dict[str, List[str]]:
         if provider:
             if provider not in takeovers:
                 takeovers[provider] = []
-            takeovers[provider].append(tasks[i]._coro.cr_frame.f_locals['url'])
+            takeovers[provider].append(tasks[i]._coro.cr_frame.f_locals["url"])
 
     return takeovers
 
@@ -74,7 +81,7 @@ async def main():
     takeovers = await find_subdomain_takeovers(domain)
     filename = f"{domain}_subdomain_takeovers.txt"
 
-    with open(filename, 'w') as f:
+    with open(filename, "w") as f:
         for provider, urls in takeovers.items():
             f.write(f"Possible {provider} takeovers:\n")
             for url in urls:
