@@ -4,20 +4,13 @@ from dns import resolver
 from dns.exception import DNSException
 from typing import List, Dict, Optional
 from identifiers import IDENTIFIERS
+from amass import run_amass
+from dns_bruteforce import dns_bruteforce, load_wordlist
+from dns_zone_transfer import dns_zone_transfer
+from ct_logs import ct_logs_crtsh
 
-USER_AGENT = "SubdomainTakeoverScanner/1.0 (+https://github.com/yourusername/subdomain-takeover-scanner)"
-
-
-def get_subdomains(domain: str) -> List[str]:
-    subdomains = set()
-    try:
-        answers = resolver.resolve(f'_subdomain_enum.{domain}', 'TXT')
-        for rdata in answers:
-            subdomains |= set(rdata.strings[0].decode().split(','))
-    except DNSException as e:
-        print(f"Error resolving subdomains: {e}")
-
-    return list(subdomains)
+PROJECT_URL = "https://github.com/yourusername/subdomain-takeover-scanner"
+USER_AGENT = f"SubdomainTakeoverScanner/1.0 (+{PROJECT_URL})"
 
 
 async def check_subdomain_takeover(url: str, sem: asyncio.Semaphore) -> Optional[str]:
@@ -39,14 +32,30 @@ async def check_subdomain_takeover(url: str, sem: asyncio.Semaphore) -> Optional
 
 
 async def find_subdomain_takeovers(domain: str) -> Dict[str, List[str]]:
-    subdomains = get_subdomains(domain)
+    # Amass subdomains
+    amass_subdomains = run_amass(domain)
+    
+    # DNS brute-forcing
+    wordlist_filename = "wordlist.txt"
+    wordlist = load_wordlist(wordlist_filename)
+    brute_force_subdomains = dns_bruteforce(domain, wordlist)
+    
+    # DNS zone transfers
+    zone_transfer_subdomains = dns_zone_transfer(domain)
+    
+    # Certificate Transparency logs
+    ct_subdomains = ct_logs_crtsh(domain)
+    
+    # Combine all subdomains
+    subdomains = list(set(amass_subdomains + brute_force_subdomains + zone_transfer_subdomains + ct_subdomains))
+
     takeovers = {}
     sem = asyncio.Semaphore(10)  # Set the concurrency level (number of simultaneous tasks)
 
     tasks = []
     for subdomain in subdomains:
         for protocol in ('http', 'https'):
-            url = f"{protocol}://{subdomain}.{domain}"
+            url = f"{protocol}://{subdomain}"
             tasks.append(asyncio.ensure_future(check_subdomain_takeover(url, sem)))
 
     results = await asyncio.gather(*tasks)
