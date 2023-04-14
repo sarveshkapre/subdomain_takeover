@@ -7,7 +7,7 @@ from dns_bruteforce import dns_bruteforce, load_wordlist
 from dns_zone_transfer import dns_zone_transfer
 from ct_logs import ct_logs_crtsh
 
-PROJECT_URL = "https://github.com/yourusername/subdomain-takeover-scanner"
+PROJECT_URL = "https://github.com/example/subdomain_takeover"
 USER_AGENT = f"SubdomainTakeoverScanner/1.0 (+{PROJECT_URL})"
 
 

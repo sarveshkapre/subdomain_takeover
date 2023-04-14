@@ -1,22 +1,21 @@
 import dns.resolver
-import itertools
+from typing import List
 
-def load_wordlist(filename: str) -> list[str]:
+def load_wordlist(filename: str) -> List[str]:
     with open(filename, 'r') as file:
         wordlist = [line.strip() for line in file.readlines()]
     return wordlist
 
-def dns_bruteforce(domain: str, wordlist: str) -> list[str]:
+def dns_bruteforce(domain: str, wordlist: List[str]) -> List[str]:
     resolver = dns.resolver.Resolver()
     subdomains = []
 
     for subdomain in wordlist:
+        target = f"{subdomain}.{domain}"
         try:
-            target = f"{subdomain}.{domain}"
-            answers = resolver.resolve(target)
-            if answers:
-                subdomains.append(target)
-                print(f"Found subdomain: {target}")
+            resolver.resolve(target)  # Check if the target subdomain resolves to any IP address
+            subdomains.append(target)
+            print(f"Found subdomain: {target}")
         except dns.resolver.NXDOMAIN:
             pass
         except Exception as e:
