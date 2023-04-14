@@ -77,7 +77,7 @@ Several online tools are available for monitoring certificate transparency logs,
 - crt.sh
 - Google Certificate Transparency Search
 
-Best Practices for Preventing Subdomain Takeovers
+## Best Practices for Preventing Subdomain Takeovers
 
 In addition to using the above techniques for detecting subdomain takeovers, there are several best practices that organizations can follow to prevent subdomain takeovers:
 
