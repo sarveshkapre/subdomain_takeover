@@ -67,6 +67,10 @@ The scanner generates a report with the results, listing potential takeovers by 
 
 - Check for vulnerable third-party services: Investigate the third-party services that your subdomains rely on. Make sure these services have proper access controls, authentication mechanisms, and are patched with the latest security updates to reduce the risk of subdomain takeovers.
 
+- Check for misconfigured permissions: Review the permissions and access controls for your subdomains and associated resources, including cloud storage, content delivery networks, and web applications. Misconfigured permissions may allow attackers to take control of a subdomain or its resources.
+
+- Analyze DNSSEC configurations: Check the DNSSEC (Domain Name System Security Extensions) configurations of your domain and subdomains. Misconfigured or missing DNSSEC settings can leave your domain and subdomains vulnerable to attacks, including subdomain takeovers.
+
 ## Limitations and known issues
 
 - The script relies on DNS TXT records for subdomain enumeration. If the target domain does not have a TXT record for subdomain enumeration, the script may not discover all subdomains.
