@@ -27,6 +27,30 @@ The main steps in the Subdomain Takeover Scanner are:
 2. Check the enumerated subdomains for potential subdomain takeovers.
 3. Generate a report with the results.
 
+
+## How does the code work? and what it does?
+
+The subdomain_takeover.py script detects subdomain takeovers by first discovering all the subdomains using various techniques:
+
+- Amass: A tool that performs passive DNS enumeration, DNS brute-forcing, and reverse IP lookups.
+- DNS brute-forcing: Tries to resolve subdomains from a given wordlist against a target domain.
+- DNS zone transfers: Attempts to transfer DNS zones from the domain's nameservers to discover subdomains.
+- Certificate Transparency logs: Retrieves subdomains associated with SSL/TLS certificates using the crt.sh API.
+
+After discovering the subdomains, the script checks for potential subdomain takeover issues by looking for specific identifiers in the content of each subdomain's webpage. The IDENTIFIERS dictionary contains key-value pairs of the hosting providers and their respective search domains and unique identifiers.
+
+The check_subdomain_takeover() function takes a URL and checks if the URL's content contains the unique identifier associated with any of the hosting providers. If it finds a match, it means that the subdomain might be vulnerable to takeover.
+
+However, the current script does not cover all possible techniques for detecting subdomain takeovers. To improve the detection capabilities, consider adding the following techniques:
+
+- Verify ownership: For each discovered subdomain, check if your organization's account owns the corresponding resources on the hosting provider. This can be done by using the provider's API or console to verify ownership.
+
+- Check for orphaned or expired subdomains: Ensure that the discovered subdomains are active and properly configured. If a subdomain is no longer in use or has expired, it could be vulnerable to takeover by an attacker.
+
+- Validate SSL/TLS certificates: Ensure that SSL/TLS certificates for each subdomain are properly configured and up-to-date. Misconfigured certificates can indicate potential vulnerabilities.
+
+- Monitor for unexpected changes: Continuously monitor the DNS records and SSL/TLS certificate configurations of your subdomains for any unexpected changes or misconfigurations. Anomalies can be an early indication of a subdomain takeover attempt.
+
 ## Subdomain Enumeration Techniques
 
 The scanner uses the following techniques to enumerate subdomains:
@@ -55,7 +79,7 @@ After enumerating subdomains, the scanner checks each subdomain for potential su
 
 The scanner generates a report with the results, listing potential takeovers by provider, and saves it to a text file. The `main()` function handles user input, calls the `find_subdomain_takeovers()` function, and writes the report.
 
-## Detecting Subdomain Takeovers
+## Generic Guidelines for Detecting Subdomain Takeovers
 
 - Check for dangling DNS records: Inspect CNAME records pointing to external services that are not in use or improperly configured. If a subdomain has a CNAME record pointing to a third-party service that isn't correctly set up, an attacker could potentially claim that service and take control of the subdomain.
 
