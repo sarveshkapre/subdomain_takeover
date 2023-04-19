@@ -41,7 +41,7 @@ After discovering the subdomains, the script checks for potential subdomain take
 
 The check_subdomain_takeover() function takes a URL and checks if the URL's content contains the unique identifier associated with any of the hosting providers. If it finds a match, it means that the subdomain might be vulnerable to takeover.
 
-However, the current script does not cover all possible techniques for detecting subdomain takeovers. To improve the detection capabilities, consider adding the following techniques:
+The current script covers the following techniques for detecting subdomain takeovers. However we still need to improve the detection capabilities.
 
 - Verify ownership: For each discovered subdomain, check if your organization's account owns the corresponding resources on the hosting provider. This can be done by using the provider's API or console to verify ownership.
 
